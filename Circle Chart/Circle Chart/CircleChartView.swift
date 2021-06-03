@@ -17,7 +17,7 @@ class CircleChartView: UIView {
         let color: UIColor
     }
 
-
+    var sectorWidth: CGFloat = 24.0
     private let sectors: [Sector]
     private var circleRect: CGRect
     private let lineWidth: CGFloat = 2.0
@@ -69,6 +69,7 @@ class CircleChartView: UIView {
         context.saveGState()
         defer { context.restoreGState() }
         let radius = (rect.width - lineWidth * 2) / 2
+        let innerRadius = radius - sectorWidth
         let center = CGPoint(x: rect.width / 2, y: rect.height / 2)
         var angle: CGFloat = -1.0 * CGFloat.pi / 2
         for sector in sectors {
@@ -76,9 +77,8 @@ class CircleChartView: UIView {
             let endAngle = angle + sectorAngle
             context.setFillColor(sector.color.cgColor)
             context.beginPath()
-            context.move(to: center)
-            context.addArc(center: center, radius: radius, startAngle: angle, endAngle: endAngle, clockwise: false)
-            context.addLine(to: center)
+            context.addArc(center: center, radius: innerRadius, startAngle: angle, endAngle: endAngle, clockwise: false)
+            context.addArc(center: center, radius: radius, startAngle: endAngle, endAngle: angle, clockwise: true)
             context.closePath()
             context.fillPath()
             angle = endAngle
